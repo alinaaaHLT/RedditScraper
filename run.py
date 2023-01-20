@@ -2,7 +2,7 @@ from reddit_io import RedditIO
 import logging
 import time
 from db import create_db_tables
-
+from db_mod import create_db_tables
 
 def main():
 	# Use a breakpoint in the code line below to debug your script.

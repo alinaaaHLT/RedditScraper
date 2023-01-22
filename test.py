@@ -14,7 +14,13 @@ intents = discord.Intents.default()
 
 client = discord.Client(intents=intents)
 
-
+kw_list = ['aryan', 'assassin', 'auschwitz', 'behead', 'black people', 'bomb', 'child porn', 'chink', 'clinton',
+           'columbine', 'concentration camp', 'cunt', 'dago', 'death', 'decapitat', 'dies', 'died', 'drown',
+           'execution', 'fag', 'fuck off', 'fuck you', 'genocide', 'hitler', 'holocaust', 'incest', 'isis', 'israel',
+           'jewish', 'jews', 'jihad', 'kike', 'kill', 'kkk', 'kys', 'loli', 'master race', 'murder', 'nationalist',
+           'nazi', 'nigga', 'nigger', 'paedo', 'paki', 'palestin', 'pedo', 'racist', 'rape', 'raping', 'rapist',
+           'retard', 'school shoot', 'self harm', 'shoot', 'stab', 'slut', 'spic', 'suicide', 'swastika', 'terroris',
+           'torture', 'tranny', 'trump', 'white power', 'you die']
 
 @client.event
 async def on_ready():
@@ -40,7 +46,7 @@ async def on_message(message):  # event that happens per any message.
 async def sync_modlog_to_discord(bot):
 
     sr = await bot.subreddit('SubSimGPT2Interactive')
-    async for log_thing in sr.mod.log(limit=35): #bot.subreddit("mod").mod.log(limit=20):
+    async for log_thing in sr.mod.log(limit=50): #bot.subreddit("mod").mod.log(limit=20):
         record = await is_log_thing_in_database(log_thing)
 
         if record:
@@ -48,12 +54,12 @@ async def sync_modlog_to_discord(bot):
         if not record:
             await insert_log_thing_into_database(log_thing)
             #SubSim
-            channel_priv = client.get_channel(1057101056796004362)
-            channel_pub = client.get_channel(1066096486271692872)
+            #channel_priv = client.get_channel(1057101056796004362)
+            #channel_pub = client.get_channel(1066096486271692872)
 
             #Test:
-            #channel_priv = client.get_channel(1059231002913935410)
-            #channel_pub = client.get_channel(1059231072040267796)
+            channel_priv = client.get_channel(1059231002913935410)
+            channel_pub = client.get_channel(1059231072040267796)
             if "approvecomment" in log_thing.action:
                 print(f"{log_thing.id} was disregarded due to \"approvecomment\"")
                 continue
@@ -64,8 +70,19 @@ async def sync_modlog_to_discord(bot):
                 pub_mod_str = "by: **Reddit**"
             else:
                 pub_mod_str = "by: Mod"
-
+            kw = ""
+            if log_thing.details == "Automod negative keyword" and log_thing.target_body:
+                count = 0
+                for i in kw_list:
+                    test = log_thing.target_body.find(i)
+                    if test != -1:
+                        if count == 0:
+                            kw = i
+                            count = 1
+                        else:
+                            kw = kw + ","+i
             if log_thing.target_body:
+                log_thing.target_body = (log_thing.target_body[:150] + '..') if len(log_thing.target_body) > 150 else log_thing.target_body
                 body = f" : \"{log_thing.target_body}\""
             else:
                 body = ""
@@ -84,8 +101,8 @@ async def sync_modlog_to_discord(bot):
                 permalink = f"https://reddit.com{log_thing.target_permalink}"
             else:
                 permalink = ""
-            log_thing_string_priv = (f"{permalink}{body} {author} **{log_thing.action}** by **{getattr(log_thing.mod, 'name', '')}** because of \"{reason}\"\n")
-            log_thing_string_pub = (f"{permalink}{body} {author} **{log_thing.action}** {pub_mod_str} because of \"{reason}\"\n")
+            log_thing_string_priv = (f"{permalink}{body} {author} **{log_thing.action}** by **{getattr(log_thing.mod, 'name', '')}** because of \"{reason}\" ({kw})\n")
+            log_thing_string_pub = (f"{permalink}{body} {author} **{log_thing.action}** {pub_mod_str} because of \"{reason}\" ({kw})\n")
             await channel_pub.send(log_thing_string_pub)
             await channel_priv.send(log_thing_string_priv)
     await asyncio.sleep(15)

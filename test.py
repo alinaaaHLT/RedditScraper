@@ -60,10 +60,12 @@ async def sync_modlog_to_discord(bot):
             #Test:
             channel_priv = client.get_channel(1059231002913935410)
             channel_pub = client.get_channel(1059231072040267796)
-            if "approvecomment" in log_thing.action:
+            if "approvecomment" in log_thing.action and log_thing.mod.name == "AutoModerator":
                 print(f"{log_thing.id} was disregarded due to \"approvecomment\"")
                 continue
-
+            if "approvelink" in log_thing.action and log_thing.mod.name == "AutoModerator":
+                print(f"{log_thing.id} was disregarded due to \"approvelink\"")
+                continue
             if "AutoModerator" in log_thing.mod.name:
                 pub_mod_str = "by: **Automoderator**"
             elif "reddit" in log_thing.mod.name:

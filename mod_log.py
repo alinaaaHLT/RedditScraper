@@ -20,7 +20,9 @@ kw_list = ['aryan', 'assassin', 'auschwitz', 'behead', 'black people', 'bomb', '
            'jewish', 'jews', 'jihad', 'kike', 'kill', 'kkk', 'kys', 'loli', 'master race', 'murder', 'nationalist',
            'nazi', 'nigga', 'nigger', 'paedo', 'paki', 'palestin', 'pedo', 'racist', 'rape', 'raping', 'rapist',
            'retard', 'school shoot', 'self harm', 'shoot', 'stab', 'slut', 'spic', 'suicide', 'swastika', 'terroris',
-           'torture', 'tranny', 'trump', 'white power', 'you die']
+           'torture', 'tranny', 'trump', 'white power', 'you die', 'trump']
+# Keyword list from Automod
+
 
 @client.event
 async def on_ready():
@@ -31,17 +33,6 @@ async def on_ready():
 
     while True:
             await sync_modlog_to_discord(bot)
-
-
-@client.event
-async def on_message(message):  # event that happens per any message.
-
-    # each message has a bunch of attributes. Here are a few.
-    # check out more by print(dir(message)) for example.
-    print(f"{message.channel}: {message.author}: {message.author.name}: {message.content}")
-
-
-#async def main():
 
 async def sync_modlog_to_discord(bot):
 
@@ -54,19 +45,17 @@ async def sync_modlog_to_discord(bot):
         if not record:
             await insert_log_thing_into_database(log_thing)
             #SubSim
-            #channel_priv = client.get_channel(1057101056796004362)
-            #channel_pub = client.get_channel(1066096486271692872)
+            channel_priv = client.get_channel(1057101056796004362) #The channels the bot replies in, pub removes the mod name if the action isn't done by Automod
+            channel_pub = client.get_channel(1066096486271692872)
 
-            #Test:
-            channel_priv = client.get_channel(1059231002913935410)
-            channel_pub = client.get_channel(1059231072040267796)
             if "approvecomment" in log_thing.action and log_thing.mod.name == "AutoModerator":
                 print(f"{log_thing.id} was disregarded due to \"approvecomment\"")
                 continue
             if "approvelink" in log_thing.action and log_thing.mod.name == "AutoModerator":
                 print(f"{log_thing.id} was disregarded due to \"approvelink\"")
                 continue
-            if "AutoModerator" in log_thing.mod.name:
+
+            if "AutoModerator" in log_thing.mod.name and log_thing.mod.name == "AutoModerator":
                 pub_mod_str = "by: **Automoderator**"
             elif "reddit" in log_thing.mod.name:
                 pub_mod_str = "by: **Reddit**"
@@ -76,15 +65,17 @@ async def sync_modlog_to_discord(bot):
             if log_thing.details == "Automod negative keyword" and log_thing.target_body:
                 count = 0
                 for i in kw_list:
-                    test = log_thing.target_body.find(i)
+                    test = log_thing.target_body.lower().find(i)
                     if test != -1:
                         if count == 0:
                             kw = i
                             count = 1
                         else:
                             kw = kw + ","+i
+            else:
+                kw = ""
             if log_thing.target_body:
-                log_thing.target_body = (log_thing.target_body[:150] + '..') if len(log_thing.target_body) > 150 else log_thing.target_body
+                log_thing.target_body = (log_thing.target_body[:300] + '..') if len(log_thing.target_body) > 300 else log_thing.target_body
                 body = f" : \"{log_thing.target_body}\""
             else:
                 body = ""
@@ -119,6 +110,7 @@ async def is_log_thing_in_database(log_thing):
     return record
 
 async def insert_log_thing_into_database(log_thing):
+    # Put the mod action into the db, lazily stolen from ssi-bot
     record_dict = {}
     record_dict['id'] = log_thing.id
     record_dict['created_utc'] = log_thing.created_utc
@@ -132,8 +124,10 @@ async def insert_log_thing_into_database(log_thing):
     record_dict['target_permalink'] = log_thing.target_permalink
 
     return db_Thing.create(**record_dict)
-
-client.run(os.getenv('TOKEN'))
+    
+mod_log_secret = "E"
+client.run(mod_log_secret)
+#Run the Discord client, config should be moved in a config file
 
 #if __name__ == '__main__':
 #    main()

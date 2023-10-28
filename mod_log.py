@@ -20,7 +20,7 @@ kw_list = ['aryan', 'assassin', 'auschwitz', 'behead', 'black people', 'bomb', '
            'jewish', 'jews', 'jihad', 'kike', 'kill', 'kkk', 'kys', 'loli', 'master race', 'murder', 'nationalist',
            'nazi', 'nigga', 'nigger', 'paedo', 'paki', 'palestin', 'pedo', 'racist', 'rape', 'raping', 'rapist',
            'retard', 'school shoot', 'self harm', 'shoot', 'stab', 'slut', 'spic', 'suicide', 'swastika', 'terroris',
-           'torture', 'tranny', 'trump', 'white power', 'you die', 'trump']
+           'torture', 'tranny', 'trump', 'white power', 'you die']
 # Keyword list from Automod
 
 
@@ -59,6 +59,8 @@ async def sync_modlog_to_discord(bot):
                 pub_mod_str = "by: **Automoderator**"
             elif "reddit" in log_thing.mod.name:
                 pub_mod_str = "by: **Reddit**"
+            elif "Anti-Evil Operations" in log_thing.mod.name:
+                pub_mod_str = "by: **Anti-Evil Operations**"
             else:
                 pub_mod_str = "by: Mod"
             kw = ""

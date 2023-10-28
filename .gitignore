@@ -14,3 +14,5 @@ __pycache__/
 *.py[cod]
 .vscode/launch.json
 .idea/
+*.sqlite3-wal
+*.sqlite3

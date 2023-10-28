@@ -1,9 +1,0 @@
-created_utc
-action
-details
-mod
-id
-target_author
-target_body
-target_fullname
-target_permalink

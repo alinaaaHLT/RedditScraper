@@ -1,14 +1,29 @@
+
+import configparser
 import time
+from peewee import *
+from playhouse.signals import pre_save
+from playhouse.mysql_ext import MySQLDatabase, JSONField
+import datetime
 
-from peewee import IntegerField, TextField, TimestampField
-from playhouse.signals import Model, pre_save
-from playhouse.sqlite_ext import JSONField
-from playhouse.sqliteq import SqliteQueueDatabase
+# Reading MySQL configuration from sql_conf.ini
+config = configparser.ConfigParser()
+config.read('sql_conf.ini')
 
-db = SqliteQueueDatabase('bot-db.sqlite3', pragmas={'journal_mode': 'wal', 'foreign_keys': 1})
+mysql_config = {
+    'host': config['mysql']['host'],
+    'port': int(config['mysql']['port']),
+    'user': config['mysql']['user'],
+    'password': config['mysql']['password'],
+    'database': config['mysql']['database']
+}
 
+# Establishing MySQL database connection
+db = MySQLDatabase(**mysql_config)
 
-class Thing(Model):
+class bot_db(Model):
+    # The rest of the class remains the same as it was in the original file
+
 	# This table is not meant to represent a complete relationship of submissions/comments on reddit
 
 	# Its behaviour is more of a log to track submissions and comments
@@ -17,7 +32,7 @@ class Thing(Model):
 	# It also acts as a job queue of sorts, for the model text generator daemon
 
 	# timestamp representation of when this record was entered into the database
-	created_utc = TimestampField(default=time.time, utc=True)
+	datetime =  DateTimeField(default=datetime.datetime.now)
 	status = IntegerField(default=1)
 
 	# the praw *name* of the original comment or submission,
@@ -32,6 +47,8 @@ class Thing(Model):
 	title = TextField(null=True)
 	# Body of Submission/Comment
 	body = TextField(null=True)
+	removal_reason = TextField(null=True)
+	id = TextField(null=False)
 
 	class Meta:
 		database = db
@@ -39,9 +56,7 @@ class Thing(Model):
 
 def create_db_tables():
 
-	db.create_tables(models=[Thing])
+	db.create_tables(models=[bot_db])
 	# these stop/start calls are required
 	# because of nuance in SqliteQueueDatabase
 	time.sleep(0.1)
-	db.stop()
-	db.start()

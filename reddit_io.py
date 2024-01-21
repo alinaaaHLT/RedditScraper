@@ -14,13 +14,22 @@ from praw.models import (Submission as praw_Submission, Comment as praw_Comment,
 from peewee import fn
 
 import db
-from db import Thing as db_Thing
+from db import bot_db as db_Thing
+from db_mod import modlog_db as mod_log_db_Thing
 
 import logging
 
 handler = logging.StreamHandler()
 handler.setLevel(logging.DEBUG)
 
+kw_list = ['aryan', 'assassin', 'auschwitz', 'behead', 'black people', 'bomb', 'child porn', 'chink', 'clinton',
+           'columbine', 'concentration camp', 'cunt', 'dago', 'death', 'decapitat', 'dies', 'died', 'drown',
+           'execution', 'fag', 'fuck off', 'fuck you', 'genocide', 'hitler', 'holocaust', 'incest', 'isis', 'israel',
+           'jewish', 'jews', 'jihad', 'kike', 'kill', 'kkk', 'kys', 'loli', 'master race', 'murder', 'nationalist',
+           'nazi', 'nigga', 'nigger', 'paedo', 'paki', 'palestin', 'pedo', 'racist', 'rape', 'raping', 'rapist',
+           'retard', 'school shoot', 'self harm', 'shoot', 'stab', 'slut', 'spic', 'suicide', 'swastika', 'terroris',
+           'torture', 'tranny', 'trump', 'white power', 'you die']
+# Keyword list from Automod
 
 # for logger_name in ("pbfaw", "prawcore"):
 #    logger = logging.getLogger(logger_name)
@@ -38,6 +47,9 @@ class RedditIO(threading.Thread):
 
 	_keyword_helper = None
 
+	#sql_config = ConfigParser()
+	#bot_config.read('sql_conf.ini')
+
 	_subreddits = []
 	_subreddit_flair_id_map = {}
 	_new_submission_schedule = []
@@ -52,15 +64,16 @@ class RedditIO(threading.Thread):
 		self.message_kind = 't4_'
 
 	def run(self):
-		subreddits_config_string = 'SubSimGPT2Interactive'
-		self._subreddits = [x.strip() for x in subreddits_config_string.lower().split(',')]
+		subreddits_config_string = ['SubSimGPT2Interactive']
+		#self._subreddits = [x.strip() for x in subreddits_config_string.lower().split(',')]
 		# pick up incoming submissions, comments etc. from reddit and submit jobs for them
 		logging.info(f"Beginning to process incoming reddit streams")
 		while True:
-
 			try:
 				if self._subreddits:
 					self.poll_incoming_streams()
+					self.sync_modlog_to_discord()
+
 			except:
 				logging.exception("Exception occurred while processing the incoming streams")
 
@@ -91,6 +104,16 @@ class RedditIO(threading.Thread):
 				# insert it into the database
 				self.insert_praw_thing_into_database(praw_thing)
 
+	def sync_modlog_to_discord(self):
+
+		sr = self._praw.subreddit('+'.join(self._subreddits))
+		for log_thing in sr.mod.log(limit=50):  # bot.subreddit("mod").mod.log(limit=20):
+			record = is_mod_action_thing_in_database(log_thing)
+
+			if record:
+				print(f"{log_thing.id} already in db")
+			if not record:
+				insert_mod_action_thing_into_database(log_thing)
 	def is_praw_thing_in_database(self, praw_thing):
 		# Note that this is using the prefixed reddit id, ie t3_, t1_
 		# do not mix it with the unprefixed version which is called id!
@@ -115,6 +138,7 @@ class RedditIO(threading.Thread):
 		record_dict['created_utc'] = praw_thing.created_utc
 		record_dict['author'] = getattr(praw_thing.author, 'name', '')
 		record_dict['link'] = praw_thing.permalink
+		record_dict['id'] = praw_thing.id
 		test = praw_thing.fullname[:3]
 		if praw_thing.fullname[:3] == 't3_':
 			record_dict['title'] = praw_thing.title
@@ -209,3 +233,27 @@ def chain_listing_generators(*iterables):
 				break
 			else:
 				yield element
+
+def is_mod_action_thing_in_database(log_thing):
+    # Note that this is using the prefixed reddit id, ie t3_, t1_
+    # do not mix it with the unprefixed version which is called id!
+    # Filter by the bot username
+    record = mod_log_db_Thing.get_or_none(mod_log_db_Thing.id == log_thing.id)
+
+    return record
+
+def insert_mod_action_thing_into_database(log_thing):
+    # Put the mod action into the db, lazily stolen from ssi-bot
+    record_dict = {}
+    record_dict['id'] = log_thing.id
+    record_dict['created_utc'] = log_thing.created_utc
+    record_dict['action'] = log_thing.action
+    record_dict['details'] = log_thing.details
+    record_dict['mod_username'] = getattr(log_thing.mod, 'name', '')
+    record_dict['target_author'] = log_thing.target_author
+    if log_thing.target_body is not None:
+        record_dict['target_body'] = log_thing.target_body
+    record_dict['target_fullname'] = log_thing.target_fullname
+    record_dict['target_permalink'] = log_thing.target_permalink
+
+    return mod_log_db_Thing.create(**record_dict)

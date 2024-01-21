@@ -1,0 +1,49 @@
+CREATE USER 'subsim'@'%' IDENTIFIED BY 'password';
+
+GRANT ALL PRIVILEGES ON *.* TO 'subsim'@'%';
+
+CREATE DATABASE subsim;
+
+use subsim;
+
+CREATE TABLE bot_db (
+    created_utc TIMESTAMP NOT NULL,
+    status TINYINT,
+    source_name TEXT,
+    author TEXT,
+    link TEXT,
+    title TEXT,
+    body TEXT,
+    removal_reason TEXT
+	id TEXT(primary_key)
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE modlog_db (
+    created_utc TIMESTAMP NOT NULL,
+    action TEXT,
+	mod_username TEXT,
+	target_author TEXT,
+	target_body TEXT,
+	id TEXT,
+	target_selftext TEXT,
+	target_fullname TEXT,
+	target_permalink TEXT,
+	modlog_message TEXT,
+	modlog_piblic_message TEXT
+	posted Boolean,
+	details TEXT,
+	id TEXT(primary_key)
+	
+
+);
+
+
+CREATE Column (
+	id TEXT(primary_key)
+	PRIMARY KEY (id)
+);
+
+
+ALTER TABLE modlog_db
+ADD COLUMN id varchar(255);

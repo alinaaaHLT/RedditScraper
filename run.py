@@ -1,22 +1,20 @@
 from reddit_io import RedditIO
 import logging
 import time
-from db import create_db_tables
+import db
 from db_mod import create_db_tables
-from threading import Thread
-import test
 
 def main():
 	# Use a breakpoint in the code line below to debug your script.
 	NEW_LOG_FORMAT = '%(asctime)s (%(threadName)s) %(levelname)s %(message)s'
 	logging.basicConfig(format=NEW_LOG_FORMAT, level=logging.INFO)
 
-	create_db_tables()
+	#db.create_db_tables()
 
 	bot_io = RedditIO(bot_username="TEST-GPT2BOT")
 	bot_io.start()
-	thread = Thread(target=test)
-	thread.start()
+	#thread = Thread(target=test)
+	#thread.start()
 	try:
 		while True:
 			time.sleep(5)

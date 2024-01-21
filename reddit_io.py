@@ -7,7 +7,6 @@ import difflib
 from configparser import ConfigParser
 from datetime import datetime, timedelta
 
-import pbfaw as pbfaw
 import praw as praw
 from praw.models import (Submission as praw_Submission, Comment as praw_Comment, Message as praw_Message)
 from peewee import fn
@@ -33,6 +32,7 @@ kw_list = ['aryan', 'assassin', 'auschwitz', 'behead', 'black people', 'bomb', '
 # for logger_name in ("pbfaw", "prawcore"):
 #    logger = logging.getLogger(logger_name)
 #    logger.setLevel(logging.DEBUG)
+#    logger.addHandler(handler)
 #    logger.addHandler(handler)
 
 class RedditIO(threading.Thread):
@@ -63,20 +63,21 @@ class RedditIO(threading.Thread):
 		self.message_kind = 't4_'
 
 	def run(self):
-		subreddits_config_string = ['SubSimGPT2Interactive']
-		#self._subreddits = [x.strip() for x in subreddits_config_string.lower().split(',')]
+		subreddits_config_string = "SubSimGPT2Interactive"
+		self._subreddits = [x.strip() for x in subreddits_config_string.lower().split(',')]
 		# pick up incoming submissions, comments etc. from reddit and submit jobs for them
 		logging.info(f"Beginning to process incoming reddit streams")
 		while True:
 			try:
 				if self._subreddits:
 					self.poll_incoming_streams()
-					self.sync_modlog_to_discord()
+					logging.info(f'Polling incoming modlog actions')
+					self.poll_incoming_modlog()
 
 			except:
 				logging.exception("Exception occurred while processing the incoming streams")
 
-			time.sleep(2)
+			time.sleep(5)
 
 	def poll_incoming_streams(self):
 
@@ -96,17 +97,16 @@ class RedditIO(threading.Thread):
 
 			# If the thing is already in the database then we've already calculated a reply for it.
 			if not record:
-				thing_label = 'comment' if isinstance(praw_thing, pbfaw_Comment) or isinstance(praw_thing,
-																							   praw_Comment) else 'submission'
+				thing_label = 'comment' if isinstance(praw_thing,praw_Comment) else 'submission'
 				logging.info(f"New {thing_label} thing received {praw_thing.name} from {praw_thing.subreddit}")
 
 				# insert it into the database
 				self.insert_praw_thing_into_database(praw_thing)
 
-	def sync_modlog_to_discord(self):
+	def poll_incoming_modlog(self):
 
 		sr = self._praw.subreddit('+'.join(self._subreddits))
-		for log_thing in sr.mod.log(limit=50):  # bot.subreddit("mod").mod.log(limit=20):
+		for log_thing in sr.mod.log(limit=10):  # bot.subreddit("mod").mod.log(limit=20):
 			record = is_mod_action_thing_in_database(log_thing)
 
 			if record:
@@ -123,11 +123,11 @@ class RedditIO(threading.Thread):
 
 	def _get_name_for_thing(self, praw_thing):
 		# Infer the name for the thing without doing a network request
-		if isinstance(praw_thing, pbfaw_Comment) or isinstance(praw_thing, praw_Comment):
+		if isinstance(praw_thing, praw_Comment):
 			return f"t1_{praw_thing.id}"
-		if isinstance(praw_thing, pbfaw_Submission) or isinstance(praw_thing, praw_Submission):
+		if isinstance(praw_thing, praw_Submission):
 			return f"{self.submission_kind}{praw_thing.id}"
-		if isinstance(praw_thing, pbfaw_Message) or isinstance(praw_thing, praw_Message):
+		if isinstance(praw_thing, praw_Message):
 			return f"{self.message_kind}{praw_thing.id}"
 
 	def insert_praw_thing_into_database(self, praw_thing):
@@ -157,18 +157,18 @@ class RedditIO(threading.Thread):
 
 		submission = None
 
-		if isinstance(praw_thing, pbfaw_Message) or isinstance(praw_thing, praw_Message):
+		if isinstance(praw_thing, praw_Message):
 			# A message that has been deleted can't be retrieved due to bug in praw
 			return False
 
-		elif isinstance(praw_thing, pbfaw_Comment) or isinstance(praw_thing, praw_Comment):
+		elif isinstance(praw_thing, praw_Comment):
 			submission = praw_thing.submission
 
 			if praw_thing.body in ['[removed]', '[deleted]']:
 				logging.error(f'Comment {praw_thing} has been deleted.')
 				return True
 
-		elif isinstance(praw_thing, pbfaw_Submission) or isinstance(praw_thing, praw_Submission):
+		elif isinstance(praw_thing, praw_Submission):
 			submission = praw_thing
 
 		if submission:
@@ -192,16 +192,16 @@ class RedditIO(threading.Thread):
 		break_after_compare = False
 
 		while loop_thing and counter < to_level:
-			if isinstance(loop_thing, pbfaw_Submission) or isinstance(loop_thing, praw_Submission):
+			if isinstance(loop_thing, praw_Submission):
 				# On a submission we'll only check the title
 				text_to_compare = loop_thing.title
 				break_after_compare = True
 
-			elif isinstance(loop_thing, pbfaw_Comment) or isinstance(loop_thing, praw_Comment):
+			elif isinstance(loop_thing, praw_Comment):
 				text_to_compare = loop_thing.body
 				loop_thing = loop_thing.parent()
 
-			elif isinstance(loop_thing, pbfaw_Message) or isinstance(loop_thing, praw_Message):
+			elif isinstance(loop_thing, praw_Message):
 				text_to_compare = loop_thing.body
 
 				if loop_thing.parent_id:

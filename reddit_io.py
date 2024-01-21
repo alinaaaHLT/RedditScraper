@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 
 import pbfaw as pbfaw
 import praw as praw
-from pbfaw.models import (Submission as pbfaw_Submission, Comment as pbfaw_Comment, Message as pbfaw_Message)
 from praw.models import (Submission as praw_Submission, Comment as praw_Comment, Message as praw_Message)
 from peewee import fn
 

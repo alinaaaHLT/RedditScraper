@@ -32,7 +32,8 @@ class bot_db(Model):
 	# It also acts as a job queue of sorts, for the model text generator daemon
 
 	# timestamp representation of when this record was entered into the database
-	datetime =  DateTimeField(default=datetime.datetime.now)
+	datetime = DateTimeField(default=datetime.datetime.now)
+	created_utc = BigIntegerField()
 	status = IntegerField(default=1)
 
 	# the praw *name* of the original comment or submission,

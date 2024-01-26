@@ -9,6 +9,8 @@ model_finetuning/dataset.ini
 model_finetuning/training_output*
 cache_dir/*
 sql_conf.ini
+sql_conf_mod_ro.ini
+db_SQL_Commands.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -18,3 +20,4 @@ __pycache__/
 *.sqlite3-wal
 *.sqlite3
 sql_conf.ini
+

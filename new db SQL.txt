@@ -1,6 +1,8 @@
 CREATE USER 'subsim'@'%' IDENTIFIED BY 'password';
+CREATE USER 'mod_ro'@'%' IDENTIFIED BY 'password';
 
 GRANT ALL PRIVILEGES ON *.* TO 'subsim'@'%';
+GRANT SELECT ON subsim.* TO 'mod_ro'@'%' IDENTIFIED BY '0000000';
 
 CREATE DATABASE subsim;
 

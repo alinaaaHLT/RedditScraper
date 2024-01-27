@@ -14,7 +14,8 @@ mysql_config = {
     'port': int(config['mysql']['port']),
     'user': config['mysql']['user'],
     'password': config['mysql']['password'],
-    'database': config['mysql']['database']
+    'database': config['mysql']['database'],
+    'charset': config['mysql']['charset']
 }
 
 # Establishing MySQL database connection

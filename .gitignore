@@ -11,6 +11,8 @@ cache_dir/*
 sql_conf.ini
 sql_conf_mod_ro.ini
 db_SQL_Commands.txt
+csv_export/*
+sub_log_to_csv/csv_export/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

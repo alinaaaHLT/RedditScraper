@@ -4,6 +4,7 @@ import datetime
 import configparser
 import pymysql
 import csv
+import time
 
 import sys
 
@@ -22,40 +23,41 @@ def main(username):
     }
     #While True here:
 
-    current_month = datetime.datetime.now().strftime('%B')
-    current_day = datetime.datetime.now().strftime('%d')
-    current_year = datetime.datetime.now().strftime('%Y')
+    while True:
+        current_month = datetime.datetime.now().strftime('%B')
+        current_day = datetime.datetime.now().strftime('%d')
+        current_year = datetime.datetime.now().strftime('%Y')
 
-    export_folder = f"csv_export"
-    folder_string = f"{export_folder}/{current_year}/{current_month}"
-    day = int(current_day) -1
+        export_folder = f"csv_export"
+        folder_string = f"{export_folder}/{current_year}/{current_month}"
+        day = int(current_day) -1
 
 
-    #check_and_write_last_month(mysql_config, folder_string)
-    if not os.path.exists(f"{export_folder}"):
-        os.mkdir(f"{export_folder}")
-    if not os.path.exists(f"{export_folder}/{current_year}/"):
-        os.mkdir(f"{export_folder}/{current_year}/")
-    if not os.path.exists(folder_string):
-        os.mkdir(folder_string)
-
-    day_test = int(current_day)-10
-    while day >= (day_test):
-        path = f"{folder_string}/day_{int(day_test)}.csv"
-        if os.path.exists(path):
-            #logging.info("Day already exists")
-            0==0
-        else:
-            if int(datetime.datetime.now().hour) < 3 or int(datetime.datetime.now().hour) >= 1:
-                check_and_write_yesterday(mysql_config, folder_string, day)
-        day = day - 1
-
-    if os.path.exists(f"{folder_string}/{current_month}.cvs"):
-        logging.info("Month csv already exists")
-    else:
-        0==0
         #check_and_write_last_month(mysql_config, folder_string)
+        if not os.path.exists(f"{export_folder}"):
+            os.mkdir(f"{export_folder}")
+        if not os.path.exists(f"{export_folder}/{current_year}/"):
+            os.mkdir(f"{export_folder}/{current_year}/")
+        if not os.path.exists(folder_string):
+            os.mkdir(folder_string)
 
+        day_test = int(current_day)-10
+        while day >= (day_test):
+            path = f"{folder_string}/day_{int(day_test)}.csv"
+            if os.path.exists(path):
+                #logging.info("Day already exists")
+                0==0
+            else:
+                if int(datetime.datetime.now().hour) < 3 or int(datetime.datetime.now().hour) >= 1:
+                    check_and_write_yesterday(mysql_config, folder_string, day)
+            day = day - 1
+
+        if os.path.exists(f"{folder_string}/{current_month}.cvs"):
+            logging.info("Month csv already exists")
+        else:
+            0==0
+            #check_and_write_last_month(mysql_config, folder_string)
+        time.sleep(60)
 
 def check_and_write_yesterday(mysql_config, folder_string, day):
     yesterday_start = datetime.datetime.combine(datetime.date.today() - datetime.timedelta(days=1), datetime.time.min)

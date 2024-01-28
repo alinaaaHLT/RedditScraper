@@ -13,6 +13,7 @@ sql_conf_mod_ro.ini
 db_SQL_Commands.txt
 csv_export/*
 sub_log_to_csv/csv_export/*
+*.sqlite3
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -23,3 +24,4 @@ __pycache__/
 *.sqlite3
 sql_conf.ini
 
+manual_tools/db_sqlite,py

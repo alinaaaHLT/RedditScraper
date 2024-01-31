@@ -50,9 +50,6 @@ async def main():
                 else:
                     continue
             conn.commit()
-            print("E")
-
-
 
         except Exception as e:
             print(f"An error occurred: {e}")

@@ -23,7 +23,7 @@ db = MySQLDatabase(**mysql_config)
 
 
 class modlog_db(Model):
-    created_utc = TimestampField(default=time.time, utc=True)
+    datetime = DateTimeField()
     action = TextField()
 
     details = TextField(null=True)

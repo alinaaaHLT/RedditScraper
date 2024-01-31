@@ -80,6 +80,7 @@ class ModLogIO(threading.Thread):
 				print(f"{log_thing.id} already in db")
 			if not record:
 				insert_mod_action_thing_into_database(log_thing)
+				print(f"{log_thing.id} inserted in db")
 
 
 def is_mod_action_thing_in_database(log_thing):
@@ -94,7 +95,6 @@ def insert_mod_action_thing_into_database(log_thing):
 
     record_dict = {}
     record_dict['id'] = log_thing.id
-    record_dict['timestamp'] = log_thing.created_utc
     record_dict['datetime'] = datetime.fromtimestamp(log_thing.created_utc)
     record_dict['action'] = log_thing.action
     record_dict['details'] = log_thing.details

@@ -109,10 +109,8 @@ def prepare_mod_log_messages(log_thing):
         "pub_message": None}
 
     if "approvecomment" in log_thing.action and log_thing.mod.name == "AutoModerator":
-        print(f"{log_thing.id} was disregarded due to \"approvecomment\"")
         return mod_log_messages
     if "approvelink" in log_thing.action and log_thing.mod.name == "AutoModerator":
-        print(f"{log_thing.id} was disregarded due to \"approvelink\"")
         return mod_log_messages
 
     if "AutoModerator" in log_thing.mod.name and log_thing.mod.name == "AutoModerator":

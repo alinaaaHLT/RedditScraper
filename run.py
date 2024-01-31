@@ -13,8 +13,8 @@ def main():
     logging.basicConfig(format=NEW_LOG_FORMAT, level=logging.INFO)
     username = "TEST-GPT2BOT"
     #sublog_to_db.sublog_to_db.start_sublog()
-    #tasks = [sublog_to_db.sublog_to_db.start_sublog, mod_log_to_db.mod_log_to_db.start_modlog, sub_log_to_csv.sub_log_to_csv.main]
-    tasks = [mod_log_to_db.mod_log_to_db.start_modlog]
+    tasks = [sublog_to_db.sublog_to_db.start_sublog, mod_log_to_db.mod_log_to_db.start_modlog, sub_log_to_csv.sub_log_to_csv.main]
+    #tasks = [mod_log_to_db.mod_log_to_db.start_modlog]
     # thread = Thread(target=test)
     # thread.start()
     for task in tasks:

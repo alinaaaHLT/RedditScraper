@@ -1,6 +1,7 @@
-import sublog_to_db.sublog_to_db
-import mod_log_to_db.mod_log_to_db
-import sub_log_to_csv.sub_log_to_csv
+import sublog_to_db.sublog_to_db as sublog_to_db
+import mod_log_to_db.mod_log_to_db as mod_log_to_db
+import sub_log_to_csv.sub_log_to_csv as sub_log_to_csv
+import mod_log_to_discord.main as mod_log_to_discord
 
 import threading
 import logging
@@ -13,8 +14,9 @@ def main():
     logging.basicConfig(format=NEW_LOG_FORMAT, level=logging.INFO)
     username = "TEST-GPT2BOT"
     #sublog_to_db.sublog_to_db.start_sublog()
-    tasks = [sublog_to_db.sublog_to_db.start_sublog, mod_log_to_db.mod_log_to_db.start_modlog, sub_log_to_csv.sub_log_to_csv.main]
+    tasks = [sublog_to_db.start_sublog, mod_log_to_db.start_modlog, sub_log_to_csv.main, mod_log_to_discord.start_discord_bot]
     #tasks = [mod_log_to_db.mod_log_to_db.start_modlog]
+    #tasks = [mod_log_to_discord.start_discord_bot]
     # thread = Thread(target=test)
     # thread.start()
     for task in tasks:

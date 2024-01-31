@@ -84,7 +84,7 @@ class ModLogIO(threading.Thread):
     def poll_incoming_modlog(self):
 
         sr = self._praw.subreddit('+'.join(self._subreddits))
-        for log_thing in sr.mod.log(limit=10):  # bot.subreddit("mod").mod.log(limit=20):
+        for log_thing in sr.mod.log(limit=25):  # bot.subreddit("mod").mod.log(limit=20):
             record = is_mod_action_thing_in_database(log_thing)
 
             if record:
@@ -122,7 +122,7 @@ def prepare_mod_log_messages(log_thing):
     else:
         pub_mod_str = "by: Mod"
     kw = ""
-    if log_thing.details == "Automod negative keyword" and log_thing.target_body:
+    if "Automod negative keyword" in log_thing.details and log_thing.target_body:
         count = 0
         for i in kw_list:
             test = log_thing.target_body.lower().find(i)
@@ -175,10 +175,7 @@ def insert_mod_action_thing_into_database(log_thing, mod_log_messages):
     record_dict['target_fullname'] = log_thing.target_fullname
     record_dict['target_permalink'] = log_thing.target_permalink
 
-    if mod_log_messages["priv_message"] is not None:
-        record_dict['modlog_private_message'] = mod_log_messages["priv_message"]
-
-    if mod_log_messages["pub_message"] is not None:
-        record_dict['modlog_public_message'] = mod_log_messages["pub_message"]
+    record_dict['modlog_private_message'] = mod_log_messages["priv_message"]
+    record_dict['modlog_public_message'] = mod_log_messages["pub_message"]
 
     return mod_log_db_Thing.create(**record_dict)

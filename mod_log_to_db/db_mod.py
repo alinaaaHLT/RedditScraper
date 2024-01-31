@@ -35,6 +35,8 @@ class modlog_db(Model):
     target_fullname = TextField(null=True)
     target_permalink = TextField(null=True)
     posted = BooleanField(null=False)
+    modlog_private_message = TextField(null=True)
+    modlog_public_message = TextField(null=True)
 
     class Meta:
         database = db

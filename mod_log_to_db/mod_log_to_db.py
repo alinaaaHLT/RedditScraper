@@ -84,7 +84,7 @@ class ModLogIO(threading.Thread):
     def poll_incoming_modlog(self):
 
         sr = self._praw.subreddit('+'.join(self._subreddits))
-        for log_thing in sr.mod.log(limit=25):  # bot.subreddit("mod").mod.log(limit=20):
+        for log_thing in sr.mod.log(limit=5):  # bot.subreddit("mod").mod.log(limit=20):
             record = is_mod_action_thing_in_database(log_thing)
 
             if record:

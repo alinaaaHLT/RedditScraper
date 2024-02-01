@@ -124,6 +124,7 @@ def prepare_mod_log_messages(log_thing):
     kw = ""
     if "Automod negative keyword" in log_thing.details and log_thing.target_body:
         count = 0
+        kw = "Keyword: "
         for i in kw_list:
             test = log_thing.target_body.lower().find(i)
             if test != -1:

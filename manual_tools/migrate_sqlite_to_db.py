@@ -60,7 +60,7 @@ try:
         else:
             logging.info(f"Skipped:   {row} ")
 
-        if i % 10 == 0 and i >= 1:
+        if i % 10 == i >= 1:
             mysql_conn.commit()
             logging.info(f"commited: {i}, total {l}")
             i = 0

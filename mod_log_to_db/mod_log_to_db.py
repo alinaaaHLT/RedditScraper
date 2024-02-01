@@ -157,9 +157,9 @@ def prepare_mod_log_messages(log_thing):
     else:
         permalink = ""
     mod_log_messages["priv_message"] = (
-        f"{permalink}{body} {author} **{log_thing.action}** by **{getattr(log_thing.mod, 'name', '')}** because of \"{reason}\" ({kw})\n")
+        f"{permalink}{body} {author} **{log_thing.action}** by **{getattr(log_thing.mod, 'name', '')}** because of \"{reason}\" ({kw})\n\n")
     mod_log_messages["pub_message"] = (
-        f"{permalink}{body} {author} **{log_thing.action}** {pub_mod_str} because of \"{reason}\" ({kw})\n")
+        f"{permalink}{body} {author} **{log_thing.action}** {pub_mod_str} because of \"{reason}\" ({kw})\n\n")
     return mod_log_messages
 
 

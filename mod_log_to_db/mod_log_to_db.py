@@ -112,6 +112,10 @@ def prepare_mod_log_messages(log_thing):
         return mod_log_messages
     if "approvelink" in log_thing.action and log_thing.mod.name == "AutoModerator":
         return mod_log_messages
+    if "distinguish" in log_thing.action:
+        return mod_log_messages
+    if "sticky " in log_thing.action:
+        return mod_log_messages
 
     if "AutoModerator" in log_thing.mod.name and log_thing.mod.name == "AutoModerator":
         pub_mod_str = "by: **Automoderator**"

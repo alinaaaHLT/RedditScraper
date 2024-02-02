@@ -86,6 +86,7 @@ class ModLogIO(threading.Thread):
         sr = self._praw.subreddit('+'.join(self._subreddits))
         for log_thing in sr.mod.log(limit=5):  # bot.subreddit("mod").mod.log(limit=20):
             record = is_mod_action_thing_in_database(log_thing)
+            time.sleep(0.2)
 
             if record:
                 print(f"{log_thing.id} already in db")

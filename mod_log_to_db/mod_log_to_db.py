@@ -115,7 +115,7 @@ def prepare_mod_log_messages(log_thing):
         return mod_log_messages
     if "distinguish" in log_thing.action:
         return mod_log_messages
-    if "sticky " in log_thing.action:
+    if "sticky " in log_thing.action or "unsticky" in log_thing.action:
         return mod_log_messages
 
     if "AutoModerator" in log_thing.mod.name and log_thing.mod.name == "AutoModerator":

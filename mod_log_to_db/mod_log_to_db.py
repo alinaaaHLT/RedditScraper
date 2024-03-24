@@ -19,9 +19,10 @@ kw_list = ['aryan', 'assassin', 'auschwitz', 'behead', 'black people', 'bomb', '
            'columbine', 'concentration camp', 'cunt', 'dago', 'death', 'decapitat', 'dies', 'died', 'drown',
            'execution', 'fag', 'fuck off', 'fuck you', 'genocide', 'hitler', 'holocaust', 'incest', 'isis', 'israel',
            'jewish', 'jews', 'jihad', 'kike', 'kill', 'kkk', 'kys', 'loli', 'master race', 'murder', 'nationalist',
-           'nazi', 'nigga', 'nigger', 'paedo', 'paki', 'palestin', 'pedo', 'racist', 'rape', 'raping', 'rapist',
-           'retard', 'school shoot', 'self harm', 'shoot', 'stab', 'slut', 'spic', 'suicide', 'swastika', 'terroris',
-           'torture', 'tranny', 'trump', 'white power', 'you die']
+           'nazi', 'nazis', 'nigga', 'nigger', 'paedo', 'paki', 'palestin', 'pedo', 'racist', 'rape', 'raping',
+           'rapist', 'retard', 'school shoot', 'self harm', 'shoot', 'stab', 'slut', 'spic', 'suicide', 'swastika',
+           'terroris', 'torture', 'tranny', 'trump', 'white power', 'you die', 'testingregex123', 'toddl',
+           'online conversation', 'online discussion']
 # Keyword list from Automod
 
 handler = logging.StreamHandler()
@@ -114,6 +115,8 @@ def prepare_mod_log_messages(log_thing):
     if "approvelink" in log_thing.action and log_thing.mod.name == "AutoModerator":
         return mod_log_messages
     if "distinguish" in log_thing.action:
+        return mod_log_messages
+    if "addremovalreason" in log_thing.action:
         return mod_log_messages
     if "sticky " in log_thing.action or "unsticky" in log_thing.action:
         return mod_log_messages

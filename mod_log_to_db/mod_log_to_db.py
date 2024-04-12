@@ -116,6 +116,7 @@ def prepare_mod_log_messages(log_thing):
         return mod_log_messages
     if "distinguish" in log_thing.action:
         return mod_log_messages
+    # Needs to be revised because "addremovalreason" should still be put in the db, but it shouldn't be shown on Discord
     if "addremovalreason" in log_thing.action:
         return mod_log_messages
     if "sticky " in log_thing.action or "unsticky" in log_thing.action:
@@ -123,6 +124,8 @@ def prepare_mod_log_messages(log_thing):
 
     if "AutoModerator" in log_thing.mod.name and log_thing.mod.name == "AutoModerator":
         pub_mod_str = "by: **Automoderator**"
+    elif "moderator_GUTENMAN" in log_thing.mod.name:
+        pub_mod_str = "by: **moderator_GUTENMAN**"
     elif "reddit" in log_thing.mod.name:
         pub_mod_str = "by: **Reddit**"
     elif "Anti-Evil Operations" in log_thing.mod.name:

@@ -22,7 +22,7 @@ kw_list = ['aryan', 'assassin', 'auschwitz', 'behead', 'black people', 'bomb', '
            'nazi', 'nazis', 'nigga', 'nigger', 'paedo', 'paki', 'palestin', 'pedo', 'racist', 'rape', 'raping',
            'rapist', 'retard', 'school shoot', 'self harm', 'shoot', 'stab', 'slut', 'spic', 'suicide', 'swastika',
            'terroris', 'torture', 'tranny', 'trump', 'white power', 'you die', 'testingregex123', 'toddl',
-           'online conversation', 'online discussion']
+           'online conversation', 'online discussion', 'biden']
 # Keyword list from Automod
 
 handler = logging.StreamHandler()

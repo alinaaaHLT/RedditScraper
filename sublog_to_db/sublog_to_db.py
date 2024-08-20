@@ -92,8 +92,8 @@ class SubLogIO(threading.Thread):
 		# Note that this is using the prefixed reddit id, ie t3_, t1_
 		# do not mix it with the unprefixed version which is called id!
 		# Filter by the bot username
-		record = db_Thing.get_or_none(db_Thing.source_name == self._get_name_for_thing(praw_thing))
 
+		record = db_Thing.get_or_none(db_Thing.source_name == self._get_name_for_thing(praw_thing))
 		return record
 
 	def _get_name_for_thing(self, praw_thing):
@@ -123,6 +123,7 @@ class SubLogIO(threading.Thread):
 				record_dict['body'] = praw_thing.url
 		if praw_thing.fullname[:3] == 't1_':
 			record_dict['body'] = praw_thing.body
+			record_dict['parent_id'] = praw_thing.parent_id
 		return db_Thing.create(**record_dict)
 
 	def _is_praw_thing_removed_or_deleted(self, praw_thing):

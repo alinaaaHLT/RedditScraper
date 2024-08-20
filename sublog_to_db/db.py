@@ -51,6 +51,7 @@ class bot_db(Model):
     body = TextField(null=True)
     removal_reason = TextField(null=True)
     id = TextField(null=False)
+    parent_id = TextField(null=True)
 
     class Meta:
         database = db

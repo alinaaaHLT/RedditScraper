@@ -44,17 +44,17 @@ async def main():
 
             #await send_to_discord(None)
             for row in rows:
-                if await send_to_discord(row, messages_index):
-                    posted_status_sql = "UPDATE modlog_db SET posted = '1' WHERE id = %s"
-                    cursor.execute(posted_status_sql, row[field_names.index("id")])
-                else:
-                    continue
+                await send_to_discord(row, messages_index)
+                posted_status_sql = "UPDATE modlog_db SET posted = '1' WHERE id = %s"
+                cursor.execute(posted_status_sql, row[field_names.index("id")])
             conn.commit()
+            conn.close()
 
         except Exception as e:
             print(f"An error occurred: {e}")
+            conn.close()
 
-        await asyncio.sleep(60)
+        await asyncio.sleep(30)
 
 
 
